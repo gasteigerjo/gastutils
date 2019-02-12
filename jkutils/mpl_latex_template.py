@@ -1,3 +1,4 @@
+import os
 import numpy as np
 import matplotlib as mpl
 from IPython.display import IFrame
@@ -90,18 +91,20 @@ def newfig(
 
 def savefig(
         filename, fig=None, tight={'pad': 0.5},
-        dpi=600, formats=['pdf', 'pgf'], **kwargs):
+        dpi=600, formats=['pgf'], **kwargs):
     if fig is None:
-        if tight:
-            plt.tight_layout(**tight)
-        for fmt in formats:
-            plt.savefig('{}.{}'.format(filename, fmt), dpi=dpi, **kwargs)
+        fig = plt.gca().figure
+    if tight:
+        fig.tight_layout(**tight)
+    for fmt in formats:
+        fig.savefig('{}.{}'.format(filename, fmt), dpi=dpi, **kwargs)
+    if 'pdf' in formats:
+        frame = IFrame(f"{filename}.pdf", width=700, height=500)
     else:
-        if tight:
-            fig.tight_layout(**tight)
-        for fmt in formats:
-            fig.savefig('{}.{}'.format(filename, fmt), dpi=dpi, **kwargs)
-    return IFrame(f"{filename}.{formats[0]}", width=700, height=500)
+        fig.savefig(f'{filename}_tmp.pdf', dpi=dpi, **kwargs)
+        frame = IFrame(f"{filename}_tmp.pdf", width=700, height=500)
+        os.remove(f'{filename}_tmp.pdf')
+    return frame
 
 
 if __name__ == "__main__":
