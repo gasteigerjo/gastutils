@@ -1,5 +1,6 @@
 import math
 import numpy as np
+import scipy.sparse as sp
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
@@ -84,3 +85,10 @@ def sparse_mat_to_padded_tensors(sp_matrix):
         padded_inds[i, :nnz_per_row[i]] = sp_matrix.indices[sp_matrix.indptr[i]:sp_matrix.indptr[i + 1]]
         padded_vals[i, :nnz_per_row[i]] = sp_matrix[i].data
     return torch.FloatTensor(padded_vals), torch.LongTensor(padded_inds), nnz_per_row
+
+
+def matrix_to_torch(X):
+    if sp.issparse(X):
+        return sparse_matrix_to_torch(X)
+    else:
+        return torch.FloatTensor(X)
