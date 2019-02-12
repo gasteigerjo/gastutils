@@ -5,6 +5,7 @@ import gzip
 import numpy as np
 from scipy import stats
 import pandas as pd
+import seaborn as sns
 
 
 def get_accuracy(predictions: np.array, labels: np.array):
@@ -61,18 +62,18 @@ def pickle_cache(filename, fn, fn_args=[], fn_kwargs={}, compression=False):
     return obj
 
 
-def softmax(logits):
+def softmax(logits, axis=-1):
     after_exp = np.exp(logits)
-    return after_exp / np.sum(after_exp, axis=1)[:, np.newaxis]
+    return after_exp / np.sum(after_exp, axis=axis, keepdims=True)
 
 
-def entropy(p):
-    return -np.sum(p * np.log2(p), axis=1)
+def entropy(p, axis=-1):
+    return -np.sum(p * np.log2(p), axis=axis)
 
 
-def lead(p):
-    sorted_p = np.sort(p, axis=1)
-    return sorted_p[:, -1] - sorted_p[:, -2]
+def margin(p, axis=-1):
+    sorted_p = np.sort(p, axis=axis)
+    return np.take(sorted_p, -1, axis=axis) - np.take(sorted_p, -2, axis=axis)
 
 
 def sum_df(df, variables, values, n_boot=1000, ci=95):
