@@ -91,7 +91,7 @@ def newfig(
 
 def savefig(
         filename, fig=None, tight={'pad': 0.5},
-        dpi=600, formats=['pgf'], **kwargs):
+        dpi=600, formats=['pdf', 'pgf'], **kwargs):
     if fig is None:
         fig = plt.gca().figure
     if tight:
@@ -99,12 +99,7 @@ def savefig(
     for fmt in formats:
         fig.savefig('{}.{}'.format(filename, fmt), dpi=dpi, **kwargs)
     if 'pdf' in formats:
-        frame = IFrame(f"{filename}.pdf", width=700, height=500)
-    else:
-        fig.savefig(f'{filename}_tmp.pdf', dpi=dpi, **kwargs)
-        frame = IFrame(f"{filename}_tmp.pdf", width=700, height=500)
-        os.remove(f'{filename}_tmp.pdf')
-    return frame
+        return IFrame(f"{filename}.pdf", width=700, height=500)
 
 
 if __name__ == "__main__":
