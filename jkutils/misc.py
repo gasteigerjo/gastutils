@@ -63,7 +63,7 @@ def pickle_cache(filename, fn, fn_args=[], fn_kwargs={}, compression=False):
 
 
 def softmax(logits, axis=-1):
-    after_exp = np.exp(logits - np.max(logits, axis=axis))
+    after_exp = np.exp(logits - np.max(logits, axis=axis, keepdims=True))
     return after_exp / np.sum(after_exp, axis=axis, keepdims=True)
 
 
