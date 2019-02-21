@@ -97,7 +97,7 @@ def sum_df(df, variables, values, n_boot=1000, ci=95):
 
 
 def paired_ttest(
-        df, top, value, select='Model', exclude=['PEP', 'PEP$_\\text{A}$']):
+        df, top, value, select='Model', exclude=['PPNP', 'APPNP']):
     df_top = df[df[select] == top]
     df_top.index = np.arange(len(df_top))
     df_others = df[(df[select] != top) & ~(df[select].isin(exclude))]
