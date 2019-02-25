@@ -76,24 +76,13 @@ def margin(p, axis=-1):
     return np.take(sorted_p, -1, axis=axis) - np.take(sorted_p, -2, axis=axis)
 
 
-def sum_df(df, variables, values, n_boot=1000, ci=95):
-    df_group = df.groupby(variables)
-    df_sum = df_group[values[0]].mean().reset_index()
-    boots_series = df_group[values[0]].apply(
-            lambda x: sns.algorithms.bootstrap(
-                x.values, func=np.mean, n_boot=n_boot)).reset_index(drop=True)
-    df_sum[f'{values[0]} CI'] = boots_series.apply(
-            lambda x: sns.utils.ci(x, ci))
-    for value in values[1:]:
-        df_sum[value] = df_group[value].mean().reset_index(drop=True)
-        boots_series = (
-                df_group[value].apply(
-                    lambda x: sns.algorithms.bootstrap(x.values, func=np.mean,
-                                                       n_boot=n_boot))
-                .reset_index(drop=True))
-        df_sum[f'{value} CI'] = boots_series.apply(
-                lambda x: sns.utils.ci(x, ci))
-    return df_sum
+def calc_uncertainty(values: np.ndarray, n_boot: int = 1000, ci: int = 95) -> dict:
+    stats = {}
+    stats['mean'] = values.mean()
+    boots_series = sns.algorithms.bootstrap(values, func=np.mean, n_boot=n_boot)
+    stats['CI'] = sns.utils.ci(boots_series, ci)
+    stats['uncertainty'] = np.max(np.abs(stats['CI'] - stats['mean']))
+    return stats
 
 
 def paired_ttest(
