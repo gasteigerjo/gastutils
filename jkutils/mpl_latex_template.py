@@ -1,4 +1,5 @@
 import os
+from threading import Timer
 import numpy as np
 import matplotlib as mpl
 from IPython.display import IFrame
@@ -91,15 +92,34 @@ def newfig(
 
 def savefig(
         filename, fig=None, tight={'pad': 0.5},
-        dpi=600, formats=['pdf', 'pgf'], **kwargs):
+        dpi=600, format='pgf', preview='pdf',
+        close_fig=True, remove_preview_file_after=10, **kwargs):
     if fig is None:
         fig = plt.gca().figure
     if tight:
         fig.tight_layout(**tight)
-    for fmt in formats:
-        fig.savefig('{}.{}'.format(filename, fmt), dpi=dpi, **kwargs)
-    if 'pdf' in formats:
-        return IFrame(f"{filename}.pdf", width=700, height=500)
+    if os.path.splitext(filename)[1] == format:
+        filepath = filename
+    else:
+        filepath = f"{filename}.{format}"
+    fig.savefig(filepath, dpi=dpi, **kwargs)
+    if close_fig:
+        if fig is None:
+            plt.close()
+        else:
+            plt.close(fig)
+    if preview is not None:
+        if preview == format:
+            preview_path = filepath
+        else:
+            while True:
+                rnd_int = np.random.randint(np.iinfo(np.uint32).max)
+                preview_path = f"preview_tmp{rnd_int}.{preview}"
+                if not os.path.exists(preview_path):
+                    break
+            fig.savefig(preview_path, dpi=dpi, **kwargs)
+            Timer(remove_preview_file_after, os.remove, args=[preview_path]).start()
+        return IFrame(os.path.relpath(preview_path), width=700, height=500)
 
 
 if __name__ == "__main__":
