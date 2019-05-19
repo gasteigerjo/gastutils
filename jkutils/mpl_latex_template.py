@@ -39,19 +39,18 @@ pgf_with_latex = {  # setup matplotlib to use latex for output
     "xtick.labelsize": 8,
     "ytick.labelsize": 8,
     "figure.figsize": figsize(0.9),  # default fig size of 0.9 textwidth
+    "text.latex.preamble": [
+        r"\usepackage[utf8x]{inputenc}",  # use utf8 fonts because your computer can handle it :)
+        r"\usepackage[T1]{fontenc}",  # plots will be generated using this preamble
+        r"\usepackage{amsmath}",
+        r"\newcommand*{\mat}[1]{\boldsymbol{#1}}",
+    ],
     "pgf.preamble": [
         r"\usepackage[utf8x]{inputenc}",  # use utf8 fonts because your computer can handle it :)
         r"\usepackage[T1]{fontenc}",  # plots will be generated using this preamble
         r"\usepackage{amsmath}",
-        r"\usepackage{accents}",  # for hattilde
-        r"\newlength{\dtildeheight}"
-        r"\newcommand{\hattilde}[1]{"
-        r"\settoheight{\dtildeheight}{\ensuremath{\tilde{#1}}}"
-        r"\addtolength{\dtildeheight}{-0.1ex}"
-        r"\hat{\vphantom{\rule{1pt}{\dtildeheight}}"
-        r"\smash{\tilde{#1}}}}",
         r"\newcommand*{\mat}[1]{\boldsymbol{#1}}",
-    ]
+    ],
 }
 mpl.rcParams.update(pgf_with_latex)
 
