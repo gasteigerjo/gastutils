@@ -129,3 +129,12 @@ def save_latex_table(filename, df, col_order=None, row_order=None, **kwargs):
     latex = '\n'.join(latex_list)
     with open(f'tables/{filename}.tex', 'w') as f_output:
         f_output.write(latex)
+
+def fmt_latex(x, fmt='.2f'):
+    exp = int(np.floor(np.log10(x)))
+    mant = x / 10**exp
+    if mant == 1:
+        s = f"10^{{{exp}}}"
+    else:
+        s = f"{{mant:{fmt}}} \cdot 10^{{{{{exp}}}}}".format(mant=mant)
+    return s
