@@ -40,13 +40,13 @@ pgf_with_latex = {  # setup matplotlib to use latex for output
     "ytick.labelsize": 8,
     "figure.figsize": figsize(0.9),  # default fig size of 0.9 textwidth
     "text.latex.preamble": [
-        r"\usepackage[utf8x]{inputenc}",  # use utf8 fonts
+        r"\usepackage[utf8]{inputenc}",  # use utf8 fonts
         r"\usepackage[T1]{fontenc}",
         r"\usepackage{amsmath}",
         r"\newcommand*{\mat}[1]{\boldsymbol{#1}}",
     ],
     "pgf.preamble": [
-        r"\usepackage[utf8x]{inputenc}",  # use utf8 fonts
+        r"\usepackage[utf8]{inputenc}",  # use utf8 fonts
         r"\usepackage[T1]{fontenc}",
         r"\usepackage{amsmath}",
         r"\newcommand*{\mat}[1]{\boldsymbol{#1}}",
