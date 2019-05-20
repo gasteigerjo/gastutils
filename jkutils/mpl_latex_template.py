@@ -68,9 +68,9 @@ import seaborn as sns
 
 def set_style(style='whitegrid'):
     if style:
-        sns.set(style=style, color_codes=True)
+        sns.set(style=style, palette='colorblind', color_codes=True)
     else:
-        sns.set(color_codes=True)
+        sns.set(palette='colorblind', color_codes=True)
     mpl.rcParams.update(pgf_with_latex)
     mpl.rcParams.update(default_params)
 
