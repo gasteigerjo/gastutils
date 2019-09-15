@@ -1,4 +1,5 @@
 import os
+from typing import Tuple, Union
 from threading import Timer
 import numpy as np
 import matplotlib as mpl
@@ -6,21 +7,41 @@ from IPython.display import IFrame
 mpl.use('pgf')
 
 
-def figsize(scale, ratio_yx=None):
-    fig_width_pt = 397.48499  # Get this from LaTeX using \the\textwidth
+def figsize(scale: float, ratio_yx: float = None, textwidth_pt: float = 397.48499) -> Tuple[float, float]:
+    """Get an appropriate figure size.
+
+    Parameters
+    ----------
+    scale
+        Size of the figure relative to the text width.
+    ratio_yx
+        Ratio of height by width.
+    textwidth_pt
+        Text width in the Latex file. Get this from LaTeX using \\the\\textwidth.
+
+    Returns
+    -------
+    float
+        Figure width
+    float
+        Figure height
+    """
+    textwidth_pt = 397.48499
     inches_per_pt = 1.0 / 72.27  # Convert pt to inch
     golden_mean = (np.sqrt(5.0) - 1.0) / 2.0  # Aesthetic ratio
     if ratio_yx is None:
         ratio_yx = golden_mean
-    fig_width = fig_width_pt * inches_per_pt * scale  # width in inches
+    fig_width = textwidth_pt * inches_per_pt * scale  # width in inches
     fig_height = fig_width * ratio_yx  # height in inches
-    fig_size = [fig_width, fig_height]
-    return fig_size
+    return fig_width, fig_height
 
 
-def sns_facetsize(tot_width=0.95, ratio_yx_facet=1.6, nrows=1, ncols=1):
+def sns_facetsize(
+        tot_width: float = 0.95, ratio_yx_facet: float = 1.6,
+        nrows: int = 1, ncols: int = 1,
+        textwidth_pt: float = 397.48499) -> Tuple[float, float]:
     ratio_yx = ratio_yx_facet * nrows / ncols
-    size = figsize(tot_width, ratio_yx)
+    size = figsize(tot_width, ratio_yx, textwidth_pt)
     height_facet = size[1] / nrows
     ratio_xy_facet = 1 / ratio_yx_facet
     return height_facet, ratio_xy_facet
@@ -66,7 +87,7 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 
 
-def set_style(style='whitegrid'):
+def set_style(style: str = 'whitegrid'):
     if style:
         sns.set(style=style, palette='colorblind', color_codes=True)
     else:
@@ -77,22 +98,26 @@ def set_style(style='whitegrid'):
 
 # Customized newfig and savefig functions
 def newfig(
-        width, ratio_yx=None, style='whitegrid', subplots=True,
-        nrows=1, ncols=1):
+        width: float, ratio_yx: float = None,
+        style: str = 'whitegrid', subplots: bool = True,
+        nrows: int = 1, ncols: int = 1,
+        textwidth_pt: float = 397.48499) -> Tuple[mpl.figure.Figure, "np.ndarray[mpl.axes._subplots.AxesSubplot]"]:
     # plt.clf()
     set_style(style=style)
     if subplots:
         return plt.subplots(
                 nrows, ncols,
-                figsize=figsize(width, ratio_yx=ratio_yx))
+                figsize=figsize(width, ratio_yx=ratio_yx,
+                                textwidth_pt=textwidth_pt))
     else:
-        return plt.subplots(figsize=figsize(width, ratio_yx=ratio_yx))
+        return plt.subplots(figsize=figsize(width, ratio_yx=ratio_yx,
+                                            textwidth_pt=textwidth_pt))
 
 
 def savefig(
-        filename, fig=None, tight={'pad': 0.5},
-        dpi=600, format='pgf', preview='pdf',
-        close_fig=True, remove_preview_file_after=10, **kwargs):
+        filename: str, fig: mpl.figure.Figure = None, tight: dict = {'pad': 0.5},
+        dpi: float = 600, format: str = 'pgf', preview: str = 'pdf',
+        close_fig: bool = True, remove_preview_file_after: float = 10, **kwargs) -> Union[IFrame, None]:
     if fig is None:
         fig = plt.gca().figure
     if tight:
