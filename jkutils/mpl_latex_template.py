@@ -26,9 +26,8 @@ def figsize(scale: float, ratio_yx: float = None, textwidth_pt: float = 397.4849
     float
         Figure height
     """
-    textwidth_pt = 397.48499
     inches_per_pt = 1.0 / 72.27  # Convert pt to inch
-    golden_mean = (np.sqrt(5.0) - 1.0) / 2.0  # Aesthetic ratio
+    golden_mean = (np.sqrt(5.0) - 1.0) / 2  # Aesthetic ratio
     if ratio_yx is None:
         ratio_yx = golden_mean
     fig_width = textwidth_pt * inches_per_pt * scale  # width in inches
