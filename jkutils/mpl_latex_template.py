@@ -81,6 +81,7 @@ default_params = {
     'grid.color': '.8',
     'axes.linewidth': 0.75,
     'axes.edgecolor': '.7',
+    'lines.linewidth': 1.0,
 }
 
 import matplotlib.pyplot as plt
