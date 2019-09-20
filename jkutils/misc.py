@@ -112,6 +112,8 @@ def bold_top(df, df_text, value):
 
 
 def save_latex_table(filename, df, col_order=None, row_order=None, **kwargs):
+    old_pd_colwidth = pd.options.display.max_colwidth
+    pd.options.display.max_colwidth = 1_000
     df_output = copy.deepcopy(df)
     if col_order is not None:
         df_output = df_output[col_order]
@@ -120,6 +122,7 @@ def save_latex_table(filename, df, col_order=None, row_order=None, **kwargs):
     df_output.columns.name = df_output.index.name
     df_output.index.name = ''
     df_output = df_output.fillna('-')
+    df_output = df_output.applymap(lambda x: "-" if x == "nan" else x)
     latex = df_output.to_latex(escape=False, **kwargs)
     latex = latex.replace('midrule', 'hline')
     latex_list = latex.splitlines()
@@ -127,8 +130,9 @@ def save_latex_table(filename, df, col_order=None, row_order=None, **kwargs):
     del latex_list[2]
     del latex_list[-2]
     latex = '\n'.join(latex_list)
-    with open(f'tables/{filename}.tex', 'w') as f_output:
+    with open(f'{filename}.tex', 'w') as f_output:
         f_output.write(latex)
+    pd.options.display.max_colwidth = old_pd_colwidth
 
 def fmt_latex(x, fmt='.2f'):
     exp = int(np.floor(np.log10(x)))
