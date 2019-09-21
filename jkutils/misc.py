@@ -113,7 +113,9 @@ def bold_best(df, df_text, max_is_best=True, exclude_model=[]):
         df_text.loc[model, target] = f"\\textbf{{{df_text.loc[model, target]}}}"
 
 
-def save_latex_table(filename, df, col_order=None, row_order=None, insert_hlines=[], **kwargs):
+def save_latex_table(
+        filename, df, col_order=None, row_order=None,
+        insert_hlines=[], **kwargs):
     old_pd_colwidth = pd.options.display.max_colwidth
     pd.options.display.max_colwidth = 1_000
     df_output = copy.deepcopy(df)
@@ -132,11 +134,12 @@ def save_latex_table(filename, df, col_order=None, row_order=None, insert_hlines
     del latex_list[2]
     del latex_list[-2]
     for line in insert_hlines:
-        latex_list.insert(line, '\\hline')
+        latex_list.insert(line + 3, '\\hline')
     latex = '\n'.join(latex_list)
     with open(f'{filename}.tex', 'w') as f_output:
         f_output.write(latex)
     pd.options.display.max_colwidth = old_pd_colwidth
+
 
 def fmt_latex(x, fmt='.2f'):
     exp = int(np.floor(np.log10(x)))
