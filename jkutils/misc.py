@@ -103,12 +103,14 @@ def paired_ttest(
         return max(pvals)
 
 
-def bold_top(df, df_text, value):
-    tops = df.loc[df.groupby(['Graph'])[value].idxmax()]
-    for graph, model in zip(tops['Graph'], tops['Model']):
-        selection = (df_text['Graph'] == graph) & (df_text['Model'] == model)
-        entry = df_text.loc[selection, value]
-        df_text.loc[selection, value] = f"\\textbf{{{entry.iloc[0]}}}"
+def bold_best(df, df_text, max_is_best=True, exclude_model=[]):
+    df_excluded = df[[idx not in exclude_model for idx in df.index]]
+    if max_is_best:
+        tops = df_excluded.idxmax()
+    else:
+        tops = df_excluded.idxmin()
+    for target, model in tops.items():
+        df_text.loc[model, target] = f"\\textbf{{{df_text.loc[model, target]}}}"
 
 
 def save_latex_table(filename, df, col_order=None, row_order=None, **kwargs):
