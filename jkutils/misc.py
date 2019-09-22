@@ -118,8 +118,10 @@ def bold_best(
         isclose = np.isclose(g, bests[name], rtol=rtol, atol=atol)
         close_bests_idx.extend(g[isclose].index)
 
+    df_bold = df_text.copy()
     for idx in close_bests_idx:
-        df_text.loc[idx, value_col] = f"\\textbf{{{df_text.loc[idx, value_col]}}}"
+        df_bold.loc[idx, value_col] = f"\\textbf{{{df_text.loc[idx, value_col]}}}"
+    return df_bold
 
 
 def save_latex_table(
