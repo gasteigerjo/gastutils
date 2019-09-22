@@ -103,14 +103,23 @@ def paired_ttest(
         return max(pvals)
 
 
-def bold_best(df, df_text, max_is_best=True, exclude_model=[]):
-    df_excluded = df[[idx not in exclude_model for idx in df.index]]
+def bold_best(
+        df, df_text, group_cols, max_is_best=True, exclude_model=[],
+        model_col='Model', value_col='value', rtol=1e-5, atol=1e-8):
+    df_filtered = df.loc[[model not in exclude_model for model in df[model_col]]]
     if max_is_best:
-        tops = df_excluded.idxmax()
+        bests = df_filtered.groupby(group_cols)[value_col].max()
     else:
-        tops = df_excluded.idxmin()
-    for target, model in tops.items():
-        df_text.loc[model, target] = f"\\textbf{{{df_text.loc[model, target]}}}"
+        bests = df_filtered.groupby(group_cols)[value_col].min()
+
+    # Get close 2nds
+    close_bests_idx = []
+    for name, g in df_filtered.groupby(group_cols)[value_col]:
+        isclose = np.isclose(g, bests[name], rtol=rtol, atol=atol)
+        close_bests_idx.extend(g[isclose].index)
+
+    for idx in close_bests_idx:
+        df_text.loc[idx, value_col] = f"\\textbf{{{df_text.loc[idx, value_col]}}}"
 
 
 def save_latex_table(
@@ -120,7 +129,7 @@ def save_latex_table(
     pd.options.display.max_colwidth = 1_000
     df_output = copy.deepcopy(df)
     if col_order is not None:
-        df_output = df_output[col_order]
+        df_output = df_output.reindex(columns=col_order)
     if row_order is not None:
         df_output = df_output.reindex(index=row_order)
     df_output.columns.name = df_output.index.name
