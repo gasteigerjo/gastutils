@@ -101,17 +101,20 @@ def newfig(
         width: float, ratio_yx: float = None,
         style: str = 'whitegrid', subplots: bool = True,
         nrows: int = 1, ncols: int = 1,
-        textwidth_pt: float = 397.48499) -> Tuple[mpl.figure.Figure, "np.ndarray[mpl.axes._subplots.AxesSubplot]"]:
+        textwidth_pt: float = 397.48499,
+        **subplots_kws) -> Tuple[mpl.figure.Figure, "np.ndarray[mpl.axes._subplots.AxesSubplot]"]:
     # plt.clf()
     set_style(style=style)
     if subplots:
         return plt.subplots(
                 nrows, ncols,
                 figsize=figsize(width, ratio_yx=ratio_yx,
-                                textwidth_pt=textwidth_pt))
+                                textwidth_pt=textwidth_pt),
+                **subplots_kws)
     else:
         return plt.subplots(figsize=figsize(width, ratio_yx=ratio_yx,
-                                            textwidth_pt=textwidth_pt))
+                                            textwidth_pt=textwidth_pt),
+                            **subplots_kws)
 
 
 def savefig(
