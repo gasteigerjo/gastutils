@@ -1,4 +1,5 @@
 import numpy as np
+import scipy.sparse as sp
 import networkx as nx
 
 
@@ -63,3 +64,21 @@ def shortest_kpath(adj_matrix, kwalks):
         T_k = T_k @ adjself_matrix > 0
         kpath_mats.append(T_k - T_last)
     return kpath_mats
+
+
+def calc_rw_mat(adj_matrix: sp.csr_matrix, colsum1: bool = True):
+    if colsum1:
+        D_vec_inv = 1 / np.sum(adj_matrix, axis=0).A1
+        D_inv = sp.diags(D_vec_inv)
+        return adj_matrix @ D_inv
+    else:
+        D_vec_inv = 1 / np.sum(adj_matrix, axis=1).A1
+        D_inv = sp.diags(D_vec_inv)
+        return D_inv @ adj_matrix
+
+
+def calc_ppr_exact(adj_matrix: sp.csr_matrix, alpha: float):
+    nnodes = adj_matrix.shape[0]
+    M = calc_rw_mat(adj_matrix)
+    A_inner = sp.eye(nnodes) - (1 - alpha) * M
+    return alpha * np.linalg.inv(A_inner.toarray())
