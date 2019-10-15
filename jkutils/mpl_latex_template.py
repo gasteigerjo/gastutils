@@ -74,37 +74,48 @@ pgf_with_latex = {  # setup matplotlib to use latex for output
 }
 mpl.rcParams.update(pgf_with_latex)
 
+import matplotlib.pyplot as plt
+import seaborn as sns
+
 # Set line widths
-default_params = {
+default_rcParams = {
     'grid.linewidth': 0.5,
     'grid.color': '.8',
     'axes.linewidth': 0.75,
     'axes.edgecolor': '.7',
     'lines.linewidth': 1.0,
+    'xtick.major.width': 0.75,
+    'ytick.major.width': 0.75,
+    'xtick.major.size': 3.0,
+    'ytick.major.size': 3.0,
+    'xtick.minor.width': 0.75,
+    'ytick.minor.width': 0.75,
+    'xtick.minor.size': 2.0,
+    'ytick.minor.size': 2.0,
+    'lines.linewidth': 1.0,
 }
 
-import matplotlib.pyplot as plt
-import seaborn as sns
 
-
-def set_style(style: str = 'whitegrid'):
+def set_style(style: str = 'whitegrid', rcParams: dict = {}):
     if style:
         sns.set(style=style, palette='colorblind', color_codes=True)
     else:
         sns.set(palette='colorblind', color_codes=True)
     mpl.rcParams.update(pgf_with_latex)
-    mpl.rcParams.update(default_params)
+    mpl.rcParams.update(default_rcParams)
+    mpl.rcParams.update(rcParams)
 
 
 # Customized newfig and savefig functions
 def newfig(
         width: float, ratio_yx: float = None,
-        style: str = 'whitegrid', subplots: bool = True,
+        style: str = 'whitegrid', rcParams: dict = {},
+        subplots: bool = True,
         nrows: int = 1, ncols: int = 1,
         textwidth_pt: float = 397.48499,
         **subplots_kws) -> Tuple[mpl.figure.Figure, "np.ndarray[mpl.axes._subplots.AxesSubplot]"]:
     # plt.clf()
-    set_style(style=style)
+    set_style(style=style, rcParams=rcParams)
     if subplots:
         return plt.subplots(
                 nrows, ncols,
