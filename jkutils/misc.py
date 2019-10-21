@@ -221,3 +221,19 @@ def to_precision(x, p):
         out.append(m)
 
     return "".join(out)
+
+
+def gaussian_filter(xs_grid, xs_data, ys_data, sigma):
+    weights = np.exp(-(xs_data - xs_grid[:, None])**2 / (2 * sigma**2))
+    return np.sum(weights * ys_data, 1) / np.sum(weights, 1)
+
+
+def gaussian_filter_bt(xs_grid, xs_data, ys_data, sigma):
+    bootstrap_res = sns.algorithms.bootstrap(
+            np.column_stack((xs_data, ys_data)),
+            func=lambda x: gaussian_filter(xs_grid, x[:, 0], x[:, 1], sigma=sigma),
+            n_boot=2000)
+
+    mean = bootstrap_res.mean(0)
+    ci = sns.utils.ci(bootstrap_res, axis=0)
+    return mean, ci
