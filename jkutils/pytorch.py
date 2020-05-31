@@ -92,3 +92,12 @@ def matrix_to_torch(X):
         return sparse_matrix_to_torch(X)
     else:
         return torch.FloatTensor(X)
+
+
+class Lambda(nn.Module):
+    def __init__(self, func):
+        super().__init__()
+        self.func = func
+
+    def forward(self, x):
+        return self.func(x)
