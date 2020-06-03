@@ -93,6 +93,7 @@ default_rcParams = {
     'xtick.minor.size': 2.0,
     'ytick.minor.size': 2.0,
     'lines.linewidth': 1.0,
+    'legend.fancybox': False,
 }
 
 
