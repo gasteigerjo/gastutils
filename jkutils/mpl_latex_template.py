@@ -1,5 +1,5 @@
 import os
-from typing import Tuple, Union
+from typing import Tuple, Optional
 from threading import Timer
 import numpy as np
 import matplotlib as mpl
@@ -7,7 +7,7 @@ from IPython.display import IFrame
 mpl.use('pgf')
 
 
-def figsize(scale: float, ratio_yx: float = None, textwidth_pt: float = 397.48499) -> Tuple[float, float]:
+def figsize(scale: float, ratio_yx: Optional[float] = None, textwidth_pt: float = 397.48499) -> Tuple[float, float]:
     """Get an appropriate figure size.
 
     Parameters
@@ -109,7 +109,7 @@ def set_style(style: str = 'whitegrid', rcParams: dict = {}):
 
 # Customized newfig and savefig functions
 def newfig(
-        width: float, ratio_yx: float = None,
+        width: float, ratio_yx: Optional[float] = None,
         style: str = 'whitegrid', rcParams: dict = {},
         subplots: bool = True,
         nrows: int = 1, ncols: int = 1,
@@ -130,9 +130,9 @@ def newfig(
 
 
 def savefig(
-        filename: str, fig: mpl.figure.Figure = None, tight: dict = {'pad': 0.5},
+        filename: str, fig: Optional[mpl.figure.Figure] = None, tight: dict = {'pad': 0.5},
         dpi: float = 600, format: str = 'pgf', preview: str = 'pdf',
-        close_fig: bool = True, remove_preview_file_after: float = 10, **kwargs) -> Union[IFrame, None]:
+        close_fig: bool = True, remove_preview_file_after: float = 10, **kwargs) -> Optional[IFrame]:
     if fig is None:
         fig = plt.gca().figure
     if tight:
