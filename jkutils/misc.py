@@ -106,17 +106,20 @@ def paired_ttest(
 
 def bold_best(
         df, df_text, group_cols, max_is_best=True, exclude_model=[],
-        model_col='Model', value_col='value', rtol=1e-5, atol=1e-8):
+        model_col='Model', value_col='value', error_col=None, rtol=1e-5, atol=1e-8):
     df_filtered = df.loc[[model not in exclude_model for model in df[model_col]]]
     if max_is_best:
-        bests = df_filtered.groupby(group_cols)[value_col].max()
+        bests_idx = df_filtered.groupby(group_cols)[value_col].idxmax()
     else:
-        bests = df_filtered.groupby(group_cols)[value_col].min()
+        bests_idx = df_filtered.groupby(group_cols)[value_col].idxmin()
 
     # Get close 2nds
     close_bests_idx = []
-    for name, g in df_filtered.groupby(group_cols)[value_col]:
-        isclose = np.isclose(g, bests[name], rtol=rtol, atol=atol)
+    for name, g in df_filtered.groupby(group_cols):
+        if error_col is None:
+            isclose = np.isclose(g[value_col], df_filtered.loc[bests_idx[name], value_col], rtol=rtol, atol=atol)
+        else:
+            isclose = np.abs(g[value_col] - df_filtered.loc[bests_idx[name], value_col]) <= (g[error_col] + df_filtered.loc[bests_idx[name], error_col])
         close_bests_idx.extend(g[isclose].index)
 
     df_bold = df_text.copy()
