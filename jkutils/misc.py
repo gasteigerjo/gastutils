@@ -106,7 +106,7 @@ def paired_ttest(
 
 def bold_best(
         df, df_text, group_cols, max_is_best=True, exclude_model=[],
-        model_col='Model', value_col='value', error_col=None, rtol=1e-5, atol=1e-8):
+        model_col='Model', value_col='value', error_col=None, rtol=1e-5, atol=1e-8, mode='latex'):
     df_filtered = df.loc[[model not in exclude_model for model in df[model_col]]]
     if max_is_best:
         bests_idx = df_filtered.groupby(group_cols)[value_col].idxmax()
@@ -124,7 +124,12 @@ def bold_best(
 
     df_bold = df_text.copy()
     for idx in close_bests_idx:
-        df_bold.loc[idx, value_col] = f"\\textbf{{{df_text.loc[idx, value_col]}}}"
+        if mode == 'latex':
+            df_bold.loc[idx, value_col] = f"\\textbf{{{df_text.loc[idx, value_col]}}}"
+        elif mode == 'markdown':
+            df_bold.loc[idx, value_col] = f"**{df_text.loc[idx, value_col]}**"
+        else:
+            raise ValueError(f"Unknown bolding mode '{mode}'")
     return df_bold
 
 
