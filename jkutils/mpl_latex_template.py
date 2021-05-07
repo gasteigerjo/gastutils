@@ -60,18 +60,19 @@ pgf_with_latex = {  # setup matplotlib to use latex for output
     "xtick.labelsize": 8,
     "ytick.labelsize": 8,
     "figure.figsize": figsize(0.9),  # default fig size of 0.9 textwidth
-    "text.latex.preamble": [
-        r"\usepackage[utf8]{inputenc}",  # use utf8 fonts
-        r"\usepackage[T1]{fontenc}",
-        r"\usepackage{amsmath}",
-        r"\newcommand*{\mat}[1]{\boldsymbol{#1}}",
+    "text.latex.preamble": """
+        \usepackage[utf8]{inputenc}
+        \usepackage[T1]{fontenc}
+        \usepackage{amsmath}
+        \newcommand*{\mat}[1]{\boldsymbol{#1}}
+        """,
     ],
-    "pgf.preamble": [
-        r"\usepackage[utf8]{inputenc}",  # use utf8 fonts
-        r"\usepackage[T1]{fontenc}",
-        r"\usepackage{amsmath}",
-        r"\newcommand*{\mat}[1]{\boldsymbol{#1}}",
-    ],
+    "pgf.preamble": """
+        \usepackage[utf8]{inputenc}
+        \usepackage[T1]{fontenc}
+        \usepackage{amsmath}
+        \newcommand*{\mat}[1]{\boldsymbol{#1}}
+        """,
 }
 mpl.rcParams.update(pgf_with_latex)
 
