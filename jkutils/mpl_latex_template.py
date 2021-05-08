@@ -66,7 +66,6 @@ pgf_with_latex = {  # setup matplotlib to use latex for output
         \usepackage{amsmath}
         \newcommand*{\mat}[1]{\boldsymbol{#1}}
         """,
-    ],
     "pgf.preamble": """
         \usepackage[utf8]{inputenc}
         \usepackage[T1]{fontenc}
