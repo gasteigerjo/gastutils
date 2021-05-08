@@ -153,7 +153,7 @@ def savefig(
             preview_path = filepath
         else:
             while True:
-                rnd_int = np.random.randint(np.iinfo(np.uint32).max)
+                rnd_int = np.random.randint(np.iinfo(np.uint32).max, dtype=np.uint32)
                 preview_path = f"preview_tmp{rnd_int}.{preview}"
                 if not os.path.exists(preview_path):
                     break
