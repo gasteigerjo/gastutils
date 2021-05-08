@@ -60,13 +60,13 @@ pgf_with_latex = {  # setup matplotlib to use latex for output
     "xtick.labelsize": 8,
     "ytick.labelsize": 8,
     "figure.figsize": figsize(0.9),  # default fig size of 0.9 textwidth
-    "text.latex.preamble": """
+    "text.latex.preamble": r"""
         \usepackage[utf8]{inputenc}
         \usepackage[T1]{fontenc}
         \usepackage{amsmath}
         \newcommand*{\mat}[1]{\boldsymbol{#1}}
         """,
-    "pgf.preamble": """
+    "pgf.preamble": r"""
         \usepackage[utf8]{inputenc}
         \usepackage[T1]{fontenc}
         \usepackage{amsmath}
