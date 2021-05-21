@@ -4,7 +4,6 @@ from threading import Timer
 import numpy as np
 import matplotlib as mpl
 from IPython.display import IFrame
-mpl.use('pgf')
 
 
 def figsize(scale: float, ratio_yx: Optional[float] = None, textwidth_pt: float = 397.48499) -> Tuple[float, float]:
@@ -133,7 +132,8 @@ def newfig(
 def savefig(
         filename: str, fig: Optional[mpl.figure.Figure] = None, tight: dict = {'pad': 0.5},
         dpi: float = 600, format: str = 'pgf', preview: str = 'pdf',
-        close_fig: bool = True, remove_preview_file_after: float = 10, **kwargs) -> Optional[IFrame]:
+        close_fig: bool = True, remove_preview_file_after: float = 10,
+        backend='pgf', **kwargs) -> Optional[IFrame]:
     if fig is None:
         fig = plt.gca().figure
     if tight:
@@ -142,7 +142,7 @@ def savefig(
         filepath = filename
     else:
         filepath = f"{filename}.{format}"
-    fig.savefig(filepath, dpi=dpi, **kwargs)
+    fig.savefig(filepath, dpi=dpi, backend=backend, **kwargs)
     if close_fig:
         if fig is None:
             plt.close()
@@ -157,7 +157,7 @@ def savefig(
                 preview_path = f"preview_tmp{rnd_int}.{preview}"
                 if not os.path.exists(preview_path):
                     break
-            fig.savefig(preview_path, dpi=dpi, **kwargs)
+            fig.savefig(preview_path, dpi=dpi, backend=backend, **kwargs)
             Timer(remove_preview_file_after, os.remove, args=[preview_path]).start()
         return IFrame(os.path.relpath(preview_path), width=700, height=500)
 
