@@ -236,11 +236,11 @@ def gaussian_filter(xs_grid, xs_data, ys_data, sigma):
     return np.sum(weights * ys_data, 1) / np.sum(weights, 1)
 
 
-def gaussian_filter_bt(xs_grid, xs_data, ys_data, sigma):
+def gaussian_filter_bt(xs_grid, xs_data, ys_data, sigma, n_boot=2000):
     bootstrap_res = sns.algorithms.bootstrap(
             np.column_stack((xs_data, ys_data)),
             func=lambda x: gaussian_filter(xs_grid, x[:, 0], x[:, 1], sigma=sigma),
-            n_boot=2000)
+            n_boot=n_boot)
 
     mean = bootstrap_res.mean(0)
     ci = sns.utils.ci(bootstrap_res, axis=0)
