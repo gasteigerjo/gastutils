@@ -1,5 +1,5 @@
 import os
-from typing import Tuple, Optional
+from typing import Tuple, Optional, Union
 from threading import Timer
 import numpy as np
 import matplotlib as mpl
@@ -97,11 +97,11 @@ default_rcParams = {
 }
 
 
-def set_style(style: str = 'whitegrid', rcParams: dict = {}):
+def set_style(style: str = 'whitegrid', palette: Union[str, list] = 'colorblind', rcParams: dict = {}):
     if style:
-        sns.set(style=style, palette='colorblind', color_codes=True)
+        sns.set_theme(style=style, palette=palette, color_codes=True)
     else:
-        sns.set(palette='colorblind', color_codes=True)
+        sns.set_theme(palette=palette, color_codes=True)
     mpl.rcParams.update(pgf_with_latex)
     mpl.rcParams.update(default_rcParams)
     mpl.rcParams.update(rcParams)
@@ -110,13 +110,13 @@ def set_style(style: str = 'whitegrid', rcParams: dict = {}):
 # Customized newfig and savefig functions
 def newfig(
         width: float, ratio_yx: Optional[float] = None,
-        style: str = 'whitegrid', rcParams: dict = {},
+        style: str = 'whitegrid', palette: Union[str, list] = 'colorblind', rcParams: dict = {},
         subplots: bool = True,
         nrows: int = 1, ncols: int = 1,
         textwidth_pt: float = 397.48499,
         **subplots_kws) -> Tuple[mpl.figure.Figure, "np.ndarray[mpl.axes._subplots.AxesSubplot]"]:
     # plt.clf()
-    set_style(style=style, rcParams=rcParams)
+    set_style(style=style, palette=palette, rcParams=rcParams)
     if subplots:
         return plt.subplots(
                 nrows, ncols,
@@ -131,7 +131,7 @@ def newfig(
 
 def savefig(
         filename: str, fig: Optional[mpl.figure.Figure] = None, tight: dict = {'pad': 0.5},
-        dpi: float = 600, format: str = 'pgf', preview: str = 'pdf',
+        dpi: float = 600, format: str = 'pgf', preview: Optional[str] = 'pdf',
         close_fig: bool = True, remove_preview_file_after: float = 10,
         backend='pgf', **kwargs) -> Optional[IFrame]:
     if fig is None:
