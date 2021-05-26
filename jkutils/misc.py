@@ -252,8 +252,8 @@ def format_with_uncertainty(val, uncertainty, max_precision=4, min_exponent=3, t
     val_prec = min(val_prec, max_precision)
     out_val = to_precision(val, precision=val_prec, min_exponent=min_exponent)
 
-    tens_rel = math.pow(10, uncertainty_exp - val_exp)
-    uncertainty = math.ceil(uncertainty / tens_rel) * tens_rel  # Always round up uncertainty
+    tens = math.pow(10, val_exp - val_prec + 1)
+    uncertainty = math.ceil(uncertainty / tens) * tens  # Always round up uncertainty
 
     uncertainty_prec = val_prec + uncertainty_exp - val_exp
 
