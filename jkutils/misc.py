@@ -234,7 +234,7 @@ def to_precision(x, precision=2, min_exponent=3):
     return "".join(out)
 
 
-def print_with_error(val, error, min_exponent=3, two_error_digits_limit=3):
+def num_with_error(val, error, min_exponent=3, two_error_digits_limit=3):
     """
     Returns a Latex number string with the right precision according to the error.
     """
@@ -254,7 +254,7 @@ def print_with_error(val, error, min_exponent=3, two_error_digits_limit=3):
     error = math.floor(error / tens) * tens
     out_error = to_precision(error, precision=error_prec, min_exponent=min_exponent)
 
-    output = f"\\num{{{val} \\pm {out_error}}}"
+    output = f"\\num{{{out_val} \\pm {out_error}}}"
     return output
 
 
