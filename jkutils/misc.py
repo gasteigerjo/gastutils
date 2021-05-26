@@ -171,9 +171,10 @@ def fmt_latex(x, fmt='.2f'):
     return s
 
 
-def to_precision(x, p):
+def to_precision(x, precision=2, min_exponent=3):
     """
-    Returns a string representation of x formatted with a precision of p
+    Returns a string representation of x formatted with to the specified precision,
+    including trailing zeros.
 
     From: http://randlet.com/blog/python-significant-figures-format/
     """
@@ -181,7 +182,7 @@ def to_precision(x, p):
     x = float(x)
 
     if x == 0.:
-        return "0." + "0"*(p-1)
+        return "0." + "0" * (precision - 1)
 
     out = []
 
@@ -189,46 +190,72 @@ def to_precision(x, p):
         out.append("-")
         x = -x
 
-    e = int(math.log10(x))
-    tens = math.pow(10, e - p + 1)
-    n = math.floor(x/tens)
+    exp = int(math.log10(x))
+    tens = math.pow(10, exp - precision + 1)
+    short = math.floor(x / tens)
 
-    if n < math.pow(10, p - 1):
-        e = e -1
-        tens = math.pow(10, e - p+1)
-        n = math.floor(x / tens)
+    if short < math.pow(10, precision - 1):
+        exp = exp - 1
+        tens = math.pow(10, exp - precision + 1)
+        short = math.floor(x / tens)
 
-    if abs((n + 1.) * tens - x) <= abs(n * tens -x):
-        n = n + 1
+    if abs((short + 1.) * tens - x) <= abs(short * tens - x):
+        short = short + 1
 
-    if n >= math.pow(10,p):
-        n = n / 10.
-        e = e + 1
+    if short >= math.pow(10, precision):
+        short = short / 10.
+        exp = exp + 1
 
-    m = "%.*g" % (p, n)
+    mantissa = "%.*g" % (precision, short)
 
-    if e < -2 or e >= p:
-        out.append(m[0])
-        if p > 1:
+    if exp <= -min_exponent or exp >= min_exponent:
+        out.append(mantissa[0])
+        if precision > 1:
             out.append(".")
-            out.extend(m[1:p])
+            out.extend(mantissa[1:precision])
         out.append('e')
-        if e > 0:
+        if exp > 0:
             out.append("+")
-        out.append(str(e))
-    elif e == (p -1):
-        out.append(m)
-    elif e >= 0:
-        out.append(m[:e+1])
-        if e+1 < len(m):
+        out.append(str(exp))
+    elif exp == (precision - 1):
+        out.append(mantissa)
+    elif exp >= 0:
+        out.append(mantissa[:exp+1])
+        if exp + 1 < len(mantissa):
             out.append(".")
-            out.extend(m[e+1:])
+            out.extend(mantissa[exp+1:])
+        else:
+            out.extend(["0"]*(exp+1-len(mantissa)))
     else:
         out.append("0.")
-        out.extend(["0"]*-(e+1))
-        out.append(m)
+        out.extend(["0"]*-(exp+1))
+        out.append(mantissa)
 
     return "".join(out)
+
+
+def print_with_error(val, error, min_exponent=3, two_error_digits_limit=3):
+    """
+    Returns a Latex number string with the right precision according to the error.
+    """
+    error_exp = math.floor(math.log10(error))
+    tens = math.pow(10, error_exp)
+    error_prec = 1
+    if error / tens < two_error_digits_limit:
+        tens /= 10
+        error_prec += 1
+
+    val_mant = math.floor(val / tens)
+    val_exp = math.floor(math.log10(val))
+    val = val_mant * tens
+    val_prec = val_exp - error_exp + error_prec
+    out_val = to_precision(val, precision=val_prec, min_exponent=min_exponent)
+
+    error = math.floor(error / tens) * tens
+    out_error = to_precision(error, precision=error_prec, min_exponent=min_exponent)
+
+    output = f"\\num{{{val} \\pm {out_error}}}"
+    return output
 
 
 def gaussian_filter(xs_grid, xs_data, ys_data, sigma):
