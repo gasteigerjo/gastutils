@@ -234,28 +234,29 @@ def to_precision(x, precision=2, min_exponent=3):
     return "".join(out)
 
 
-def num_with_error(val, error, min_exponent=3, two_error_digits_limit=3):
+def format_with_error(val, error, max_precision=4, min_exponent=3, two_error_digits_limit=3):
     """
-    Returns a Latex number string with the right precision according to the error.
+    Format val and error with the right precision according to the error.
     """
-    error_exp = math.floor(math.log10(error))
+    error_exp = math.floor(math.log10(abs(error)))
     tens = math.pow(10, error_exp)
     error_prec = 1
-    if error / tens < two_error_digits_limit:
-        tens /= 10
+    if abs(error / tens) < two_error_digits_limit:
         error_prec += 1
 
-    val_mant = math.floor(val / tens)
-    val_exp = math.floor(math.log10(val))
-    val = val_mant * tens
+    val_exp = math.floor(math.log10(abs(val)))
     val_prec = val_exp - error_exp + error_prec
+    if val_prec > max_precision:
+        val_prec = max_precision
+        error_prec = max_precision + error_exp - val_exp
     out_val = to_precision(val, precision=val_prec, min_exponent=min_exponent)
 
-    error = math.floor(error / tens) * tens
-    out_error = to_precision(error, precision=error_prec, min_exponent=min_exponent)
+    if error_prec <= 0:
+        out_error = "0"
+    else:
+        out_error = to_precision(error, precision=min(max_precision, error_prec), min_exponent=min_exponent)
 
-    output = f"\\num{{{out_val} \\pm {out_error}}}"
-    return output
+    return out_val, out_error
 
 
 def gaussian_filter(xs_grid, xs_data, ys_data, sigma):
