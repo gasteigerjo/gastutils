@@ -232,7 +232,8 @@ def to_precision(x, precision=2, min_exponent=3):
     return "".join(out)
 
 
-def format_with_uncertainty(val, uncertainty, max_precision=4, min_exponent=3, two_uncertainty_digits_limit=3):
+def format_with_uncertainty(val, uncertainty, max_precision=4, min_exponent=3,
+                            round_uncertainty_up=False, two_uncertainty_digits_limit=3):
     """
     Format val and uncertainty with the right precision according to the uncertainty.
     """
@@ -253,7 +254,10 @@ def format_with_uncertainty(val, uncertainty, max_precision=4, min_exponent=3, t
     out_val = to_precision(val, precision=val_prec, min_exponent=min_exponent)
 
     tens = math.pow(10, val_exp - val_prec + 1)
-    uncertainty = math.ceil(uncertainty / tens) * tens  # Always round up uncertainty
+    if round_uncertainty_up:
+        uncertainty = math.ceil(uncertainty / tens) * tens
+    else:
+        uncertainty = round(uncertainty / tens) * tens
 
     uncertainty_prec = val_prec + uncertainty_exp - val_exp
 
