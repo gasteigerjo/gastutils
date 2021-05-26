@@ -184,7 +184,7 @@ def to_precision(x, precision=2, min_exponent=3):
     x = float(x)
 
     if precision == 0:
-        return "0"
+        return "0.0"
 
     if x == 0.:
         return "0." + "0" * (precision - 1)
@@ -253,7 +253,7 @@ def format_with_uncertainty(val, uncertainty, max_precision=4, min_exponent=3, t
     out_val = to_precision(val, precision=val_prec, min_exponent=min_exponent)
 
     if uncertainty_prec <= 0:
-        out_uncertainty = "0"
+        out_uncertainty = "0.0"
     else:
         uncertainty = math.ceil(uncertainty / tens) * tens  # Always round up uncertainty
 
