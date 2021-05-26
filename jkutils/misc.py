@@ -238,31 +238,31 @@ def format_with_uncertainty(val, uncertainty, max_precision=4, min_exponent=3, t
     """
     assert uncertainty >= 0
 
-    uncertainty_exp = math.floor(math.log10(uncertainty))
-    tens = math.pow(10, uncertainty_exp)
-    uncertainty_prec = 1
-    if abs(uncertainty / tens) < two_uncertainty_digits_limit:
-        uncertainty_prec += 1
-        tens /= 10
-
     val_exp = math.floor(math.log10(abs(val)))
-    val_prec = val_exp - uncertainty_exp + uncertainty_prec
-    if val_prec > max_precision:
-        val_prec = max_precision
-        uncertainty_prec = max_precision + uncertainty_exp - val_exp
+    uncertainty_exp = math.floor(math.log10(uncertainty))
+    val_prec = val_exp - uncertainty_exp
+
+    # Use two digits if uncertainty is below limit
+    tens = math.pow(10, uncertainty_exp)
+    if abs(uncertainty / tens) < two_uncertainty_digits_limit:
+        val_prec += 2
+    else:
+        val_prec += 1
+
+    val_prec = min(val_prec, max_precision)
     out_val = to_precision(val, precision=val_prec, min_exponent=min_exponent)
 
-    if uncertainty_prec <= 0:
-        out_uncertainty = "0.0"
-    else:
-        uncertainty = math.ceil(uncertainty / tens) * tens  # Always round up uncertainty
+    tens_rel = math.pow(10, uncertainty_exp - val_exp)
+    uncertainty = math.ceil(uncertainty / tens_rel) * tens_rel  # Always round up uncertainty
 
-        # Handle rounding up 95 -> 100
-        uncertainty_exp2 = math.floor(math.log10(abs(uncertainty)))
-        if uncertainty_exp2 > uncertainty_exp:
-            uncertainty_prec += 1
+    uncertainty_prec = val_prec + uncertainty_exp - val_exp
 
-        out_uncertainty = to_precision(uncertainty, precision=uncertainty_prec, min_exponent=min_exponent)
+    # Handle rounding up 95 -> 100
+    uncertainty_exp2 = math.floor(math.log10(abs(uncertainty)))
+    if uncertainty_exp2 > uncertainty_exp:
+        uncertainty_prec += 1
+
+    out_uncertainty = to_precision(uncertainty, precision=uncertainty_prec, min_exponent=min_exponent)
 
     return out_val, out_uncertainty
 
