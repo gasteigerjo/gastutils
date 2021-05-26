@@ -156,7 +156,9 @@ def save_latex_table(
     for line in insert_hlines:
         latex_list.insert(line + 3, '\\hline')
     latex = '\n'.join(latex_list)
-    with open(f'{filename}.tex', 'w') as f_output:
+    if not filename.endswith('.tex'):
+        filename = f'{filename}.tex'
+    with open(filename, 'w') as f_output:
         f_output.write(latex)
     pd.options.display.max_colwidth = old_pd_colwidth
 
