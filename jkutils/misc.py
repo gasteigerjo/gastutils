@@ -181,6 +181,9 @@ def to_precision(x, precision=2, min_exponent=3):
 
     x = float(x)
 
+    if precision == 0:
+        return "0"
+
     if x == 0.:
         return "0." + "0" * (precision - 1)
 
@@ -190,23 +193,16 @@ def to_precision(x, precision=2, min_exponent=3):
         out.append("-")
         x = -x
 
-    exp = int(math.log10(x))
+    exp = int(math.floor(math.log10(x)))
     tens = math.pow(10, exp - precision + 1)
-    short = math.floor(x / tens)
+    short = round(x / tens)
 
-    if short < math.pow(10, precision - 1):
-        exp = exp - 1
-        tens = math.pow(10, exp - precision + 1)
-        short = math.floor(x / tens)
-
-    if abs((short + 1.) * tens - x) <= abs(short * tens - x):
-        short = short + 1
-
+    # Handle chain rounding up (e.g. 0.999999)
     if short >= math.pow(10, precision):
         short = short / 10.
         exp = exp + 1
 
-    mantissa = "%.*g" % (precision, short)
+    mantissa = f"{short:.{precision}g}"
 
     if exp <= -min_exponent or exp >= min_exponent:
         out.append(mantissa[0])
@@ -234,29 +230,39 @@ def to_precision(x, precision=2, min_exponent=3):
     return "".join(out)
 
 
-def format_with_error(val, error, max_precision=4, min_exponent=3, two_error_digits_limit=3):
+def format_with_uncertainty(val, uncertainty, max_precision=4, min_exponent=3, two_uncertainty_digits_limit=3):
     """
-    Format val and error with the right precision according to the error.
+    Format val and uncertainty with the right precision according to the uncertainty.
     """
-    error_exp = math.floor(math.log10(abs(error)))
-    tens = math.pow(10, error_exp)
-    error_prec = 1
-    if abs(error / tens) < two_error_digits_limit:
-        error_prec += 1
+    assert uncertainty >= 0
+
+    uncertainty_exp = math.floor(math.log10(uncertainty))
+    tens = math.pow(10, uncertainty_exp)
+    uncertainty_prec = 1
+    if abs(uncertainty / tens) < two_uncertainty_digits_limit:
+        uncertainty_prec += 1
+        tens /= 10
 
     val_exp = math.floor(math.log10(abs(val)))
-    val_prec = val_exp - error_exp + error_prec
+    val_prec = val_exp - uncertainty_exp + uncertainty_prec
     if val_prec > max_precision:
         val_prec = max_precision
-        error_prec = max_precision + error_exp - val_exp
+        uncertainty_prec = max_precision + uncertainty_exp - val_exp
     out_val = to_precision(val, precision=val_prec, min_exponent=min_exponent)
 
-    if error_prec <= 0:
-        out_error = "0"
+    if uncertainty_prec <= 0:
+        out_uncertainty = "0"
     else:
-        out_error = to_precision(error, precision=min(max_precision, error_prec), min_exponent=min_exponent)
+        uncertainty = math.ceil(uncertainty / tens) * tens  # Always round up uncertainty
 
-    return out_val, out_error
+        # Handle rounding up 95 -> 100
+        uncertainty_exp2 = math.floor(math.log10(abs(uncertainty)))
+        if uncertainty_exp2 > uncertainty_exp:
+            uncertainty_prec += 1
+
+        out_uncertainty = to_precision(uncertainty, precision=uncertainty_prec, min_exponent=min_exponent)
+
+    return out_val, out_uncertainty
 
 
 def gaussian_filter(xs_grid, xs_data, ys_data, sigma):
