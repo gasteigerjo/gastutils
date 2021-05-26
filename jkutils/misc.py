@@ -135,7 +135,7 @@ def bold_best(
 
 def save_latex_table(
         filename, df, col_order=None, row_order=None,
-        insert_hlines=[], **kwargs):
+        insert_hlines=[], index=False, index_names=False, **kwargs):
     old_pd_colwidth = pd.options.display.max_colwidth
     pd.options.display.max_colwidth = 1_000
     df_output = copy.deepcopy(df)
@@ -147,11 +147,10 @@ def save_latex_table(
     df_output.index.name = ''
     df_output = df_output.fillna('-')
     df_output = df_output.applymap(lambda x: "-" if x == "nan" else x)
-    latex = df_output.to_latex(escape=False, **kwargs)
+    latex = df_output.to_latex(escape=False, index=index, index_names=index_names, **kwargs)
     latex = latex.replace('midrule', 'hline')
     latex_list = latex.splitlines()
     del latex_list[1]
-    del latex_list[2]
     del latex_list[-2]
     for line in insert_hlines:
         latex_list.insert(line + 3, '\\hline')
