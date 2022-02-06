@@ -16,7 +16,8 @@ def figsize(scale: float, ratio_yx: Optional[float] = None, textwidth_pt: float 
     ratio_yx
         Ratio of height by width.
     textwidth_pt
-        Text width in the Latex file. Get this from LaTeX using \\the\\textwidth.
+        Text width in the Latex file. Get this from LaTeX using \\the\\textwidth
+        or \\the\\columnwidth for a single column in two column format.
 
     Returns
     -------
@@ -62,14 +63,20 @@ pgf_with_latex = {  # setup matplotlib to use latex for output
     "text.latex.preamble": r"""
         \usepackage[utf8]{inputenc}
         \usepackage[T1]{fontenc}
+        \usepackage{times}
         \usepackage{amsmath}
+        \usepackage{siunitx}
         \newcommand*{\mat}[1]{\boldsymbol{#1}}
+        \sisetup{separate-uncertainty, output-decimal-marker={.}, per-mode=symbol}
         """,
     "pgf.preamble": r"""
         \usepackage[utf8]{inputenc}
         \usepackage[T1]{fontenc}
+        \usepackage{times}
         \usepackage{amsmath}
+        \usepackage{siunitx}
         \newcommand*{\mat}[1]{\boldsymbol{#1}}
+        \sisetup{separate-uncertainty, output-decimal-marker={.}, per-mode=symbol}
         """,
 }
 mpl.rcParams.update(pgf_with_latex)
