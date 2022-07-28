@@ -1,7 +1,12 @@
 from setuptools import setup, find_packages
 
 install_requires = [
-    "matplotlib>=3.3"
+    "numpy",
+    "scipy",
+    "pandas",
+    "matplotlib>=3.3",
+    "seaborn",
+    "networkx",
 ]
 
 setup(name='gastutils',
